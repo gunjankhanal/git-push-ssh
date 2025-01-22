@@ -1,0 +1,57 @@
+org: gunjan01
+app: app-oct-24
+service: aws-node-http
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ap-south-1
+
+
+functions:
+  createNote:
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:PutItem
+        Resource: !GetAtt notesTable.Arn
+    handler: handler.createNote
+    events:
+      - httpApi:
+          path: /notes
+          method: post
+  updateNote:
+    handler: handler.updateNote
+    events:
+      - httpApi:
+          path: /notes/{id}
+          method: put
+  deleteNote:
+    handler: handler.deleteNote
+    events:
+      - httpApi:
+          path: /notes/{id}
+          method: delete
+  getNote:
+    handler: handler.getNote
+    events:
+      - httpApi:
+          path: /notes
+          method: get
+
+plugins:
+ - serverless-iam-roles-per-function
+
+resources:
+  Resources:
+    notesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: notes
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: notesId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: notesId
+            KeyType: HASH
