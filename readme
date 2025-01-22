@@ -1,0 +1,7 @@
+pip install selenium
+pip3 install selenium
+python3 -m pip install selenium
+https://sites.google.com/chromium.org/driver/
+https://googlechromelabs.github.io/chrome-for-testing/
+
+
